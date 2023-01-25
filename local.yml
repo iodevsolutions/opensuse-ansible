@@ -1,0 +1,9 @@
+- hosts: localhost
+  vars:
+    default_user: orndorff
+
+  tasks:
+    - include_tasks: tasks/users.yml
+    - include_tasks: tasks/packages.yml
+    - include_tasks: tasks/shell.yml
+

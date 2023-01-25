@@ -1,0 +1,55 @@
+# install nerd fonts
+- name: check for existing nerd font repo
+  stat: path=/home/{{ default_user }}/.nerd-fonts
+  register: nf
+
+- name: clone nerd font repo
+  shell: git clone --depth=1 https://github.com/ryanoasis/nerd-fonts /home/{{ default_user }}/.nerd-fonts
+  when: not nf.stat.exists
+
+- name: execute nerd font installer
+  script: /home/{{ default_user }}/.nerd-fonts/install.sh
+  when: not nf.stat.exists
+
+# copy neovim configuration
+- name: check for existing neovim config
+  stat: path=/home/{{ default_user }}/.config/nvim
+  register: nv
+
+- name: clone neovim configuration
+  copy: src=files/dotfiles/nvim dest=/home/{{ default_user }}/.config owner={{ default_user }} group={{ 'users' }} mode=preserve
+  when: not nv.stat.exists
+
+# install packer (neovim package manager)
+- name: check for packer install
+  stat: path=/home/{{ default_user }}/.local/share/nvim/site/pack/packer/start/packer.nvim
+  register: pk
+
+- name: install packer for neovim
+  shell: git clone --depth 1 https://github.com/wbthomason/packer.nvim /home/{{ default_user }}/.local/share/nvim/site/pack/packer/start/packer.nvim
+  when: not pk.stat.exists
+
+- name: sync packer modules with headless neovim 
+  shell: nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+  when: not pk.stat.exists
+
+# copy kitty configuration
+- name: clone kitty configuration
+  copy: src=files/dotfiles/kitty dest=/home/{{ default_user }}/.config owner={{ default_user }} group={{ 'users' }} mode=preserve force=yes
+
+# copy bash configuration
+- name: clone bash configuration
+  copy: src=files/dotfiles/bash/.bashrc dest=/home/{{ default_user }}/ owner={{ default_user }} group={{ 'users' }} mode=preserve force=yes
+
+# copy powerline configuration
+- name: clone powerline configuration
+  copy: src=files/dotfiles/powerline dest=/home/{{ default_user }}/.config owner={{ default_user }} group={{ 'users' }} mode=preserve force=yes
+
+# copy bash aliases configuration 
+# - name: clone bash aliases configuration
+#   copy: src=files/dotfiles/bash/.bash_aliases dest=/home/{{ default_user }}/ owner={{ default_user }} group={{ 'users'}} mode=preserve force=yes
+
+# copy tmux configuration
+- name: clone tmux configuration
+  copy: src=files/dotfiles/tmux/.tmux.conf dest=/home/{{ default_user }}/ owner={{ default_user }} group={{ 'users' }} mode=preserve force=yes
+
