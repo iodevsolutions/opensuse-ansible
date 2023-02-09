@@ -29,6 +29,12 @@
   shell: cd /home/{{ default_user }}/development/neovim && make install
   when: not neov.stat.exists
 
+- name: install extra packages
+  become: yes
+  package:
+    name: ['lutris']
+    state: present
+
 # install google chrome
 # - name: check for existing google chrome gpg key
 #  stat: path=/usr/share/keyrings/google_linux_signing_key.gpg
