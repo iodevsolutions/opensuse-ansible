@@ -32,7 +32,7 @@
 - name: install extra packages
   become: yes
   package:
-    name: ['lutris']
+    name: ['lutris', 'steam']
     state: present
 
 # install google chrome
